@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Панель управления - Dust Harvester{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-tachometer-alt me-2"></i>Панель управления</h1>
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-success" id="startBtn" onclick="startHarvester()" 
+                        {% if harvester_running %}disabled{% endif %}>
+                    <i class="fas fa-play me-1"></i>Запуск
+                </button>
+                <button type="button" class="btn btn-danger" id="stopBtn" onclick="stopHarvester()"
+                        {% if not harvester_running %}disabled{% endif %}>
+                    <i class="fas fa-stop me-1"></i>Стоп
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-primary p-3 me-3">
+                        <i class="fas fa-power-off text-white"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">Статус</h6>
+                        <p class="card-text mb-0" id="status-text">
+                            {% if harvester_running %}
+                                <span class="text-success">Активен</span>
+                            {% else %}
+                                <span class="text-secondary">Остановлен</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-info p-3 me-3">
+                        <i class="fas fa-search text-white"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">Кандидаты</h6>
+                        <p class="card-text mb-0" id="candidates-count">{{ candidates_found }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-success p-3 me-3">
+                        <i class="fas fa-paper-plane text-white"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">Транзакции</h6>
+                        <p class="card-text mb-0" id="transactions-count">{{ transactions_sent }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-warning p-3 me-3">
+                        <i class="fas fa-flask text-white"></i>
+                    </div>
+                    <div>
+                        <h6 class="card-title mb-0">Режим</h6>
+                        <p class="card-text mb-0">
+                            {% if dry_run %}
+                                <span class="text-warning">TEST</span>
+                            {% else %}
+                                <span class="text-success">LIVE</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-list me-2"></i>Найденные кандидаты</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped" id="candidates-table">
+                        <thead>
+                            <tr>
+                                <th>Пара</th>
+                                <th>Токен</th>
+                                <th>Surplus</th>
+                            </tr>
+                        </thead>
+                        <tbody id="candidates-tbody">
+                            <!-- Данные загружаются через JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Информация</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <small class="text-muted">Последний запуск:</small>
+                    <div id="last-run">
+                        {% if last_run_time %}
+                            {{ last_run_time.strftime('%d.%m.%Y %H:%M:%S') }}
+                        {% else %}
+                            Никогда
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="text-muted">Сеть:</small>
+                    <div>Chain ID: {{ settings.CHAIN_ID }}</div>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="text-muted">Лимит пар:</small>
+                    <div>{{ settings.MAX_PAIRS }}</div>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="text-muted">Min Profit ETH:</small>
+                    <div>{{ settings.MIN_PROFIT_ETH }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Автоматическое обновление статуса каждые 5 секунд
+    setInterval(updateStatus, 5000);
+    setInterval(updateCandidates, 10000);
+    
+    // Загрузка данных при загрузке страницы
+    updateCandidates();
+</script>
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Настройки - Dust Harvester{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1><i class="fas fa-cog me-2"></i>Настройки</h1>
+        <p class="text-muted">Текущие параметры конфигурации системы</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Основные параметры</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Режим работы</label>
+                            <div class="form-control-plaintext">
+                                {% if settings.DRY_RUN %}
+                                    <span class="badge bg-warning">DRY RUN (Тестовый)</span>
+                                {% else %}
+                                    <span class="badge bg-success">LIVE (Боевой)</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Chain ID</label>
+                            <div class="form-control-plaintext">{{ settings.CHAIN_ID }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Максимум пар для проверки</label>
+                            <div class="form-control-plaintext">{{ settings.MAX_PAIRS }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Минимальная прибыль (ETH)</label>
+                            <div class="form-control-plaintext">{{ settings.MIN_PROFIT_ETH }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">RPC URL</label>
+                            <div class="form-control-plaintext text-truncate">
+                                {{ settings.RPC_URL[:50] }}...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Приватный ключ</label>
+                            <div class="form-control-plaintext">
+                                {% if settings.PRIVATE_KEY %}
+                                    <span class="text-success">✓ Настроен</span>
+                                {% else %}
+                                    <span class="text-danger">✗ Не настроен</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-gas-pump me-2"></i>Настройки газа</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Gas Limit</label>
+                            <div class="form-control-plaintext">{{ settings.GAS_LIMIT }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Gas Price (Gwei)</label>
+                            <div class="form-control-plaintext">{{ settings.GAS_PRICE_GWEI }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">Gas Multiplier</label>
+                            <div class="form-control-plaintext">{{ settings.GAS_MULTIPLIER }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Справка</h5>
+            </div>
+            <div class="card-body">
+                <h6>Режимы работы:</h6>
+                <ul class="list-unstyled">
+                    <li><strong>DRY RUN:</strong> Поиск кандидатов без выполнения транзакций</li>
+                    <li><strong>LIVE:</strong> Полнофункциональная работа с выполнением транзакций</li>
+                </ul>
+                
+                <h6 class="mt-4">Настройка переменных окружения:</h6>
+                <p class="small text-muted">
+                    Создайте файл .env с необходимыми параметрами. 
+                    Смотрите .env.example для примера.
+                </p>
+                
+                <div class="alert alert-warning" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Внимание!</strong> В боевом режиме убедитесь в правильности настроек.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
